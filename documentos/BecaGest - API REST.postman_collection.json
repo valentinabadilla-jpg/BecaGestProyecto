@@ -1,0 +1,1349 @@
+{
+  "info": {
+    "_postman_id": "687e045e-c3a6-4597-b985-5af140415795",
+    "name": "BecaGest - API REST",
+    "description": "StartFragment\n\nAPI REST del sistema BecaGest, desarrollado con Django REST Framework.\n\nLa colección contiene solicitudes para probar la autenticación, la consulta del perfil de usuario y las operaciones sobre estudiantes, incluyendo validaciones de datos y control de permisos.\n\nBase URL: [http://127.0.0.1:8000/](http://127.0.0.1:8000/)\n\nLas solicitudes autenticadas requieren un token válido en el encabezado Authorization con el formato Token {{token}}.\n\nLas respuestas esperadas dependen de la operación y del escenario probado. Se incluyen casos exitosos y casos de error para verificar el comportamiento de la API.",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+    "_exporter_id": "55494460",
+    "_collection_link": "https://go.postman.co/collection/55494460-687e045e-c3a6-4597-b985-5af140415795?source=collection_link"
+  },
+  "item": [
+    {
+      "name": "01 - Obtener token",
+      "request": {
+        "method": "POST",
+        "header": [],
+        "body": {
+          "mode": "raw",
+          "raw": "{\r\n  \"username\": \"valen\",\r\n  \"password\": \"102030\"\r\n}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        },
+        "url": {
+          "raw": "http://127.0.0.1:8000/api/token/",
+          "protocol": "http",
+          "host": [
+            "127",
+            "0",
+            "0",
+            "1"
+          ],
+          "port": "8000",
+          "path": [
+            "api",
+            "token",
+            ""
+          ]
+        },
+        "description": "**Objetivo:** Obtener un token de autenticación para acceder a los endpoints protegidos de BecaGest.\n\n**Método:** POST\n\n**Endpoint:** `/api/token/`\n\n**Autenticación:** No requiere token previo.\n\n**Cuerpo de la solicitud (JSON):**\n\n- `username`: nombre de usuario registrado.\n    \n- `password`: contraseña del usuario.\n    \n\n**Respuesta esperada:**\n\n- `200 OK`: credenciales válidas. Devuelve el token de autenticación.\n    \n- `400 Bad Request`: solicitud incorrecta o datos requeridos ausentes.\n    \n- `401 Unauthorized`: credenciales inválidas, si así lo configura el endpoint.\n    \n\n**Observación:** El token devuelto debe utilizarse en el encabezado `Authorization` de las solicitudes que requieren autenticación, con el formato `Token valor_del_token`."
+      },
+      "response": []
+    },
+    {
+      "name": "02 - Consultar perfil",
+      "request": {
+        "auth": {
+          "type": "bearer"
+        },
+        "method": "GET",
+        "header": [
+          {
+            "key": "Authorization",
+            "value": "Token 9ce0f001f421e6296a1b3941a4e4e850b7c87b2d"
+          }
+        ],
+        "url": {
+          "raw": "http://127.0.0.1:8000/api/perfil/",
+          "protocol": "http",
+          "host": [
+            "127",
+            "0",
+            "0",
+            "1"
+          ],
+          "port": "8000",
+          "path": [
+            "api",
+            "perfil",
+            ""
+          ]
+        },
+        "description": "**Objetivo:** Consultar la información del usuario autenticado en BecaGest.\n\n**Método:** GET\n\n**Endpoint:** `/api/perfil/`\n\n**Autenticación:** Requiere un token válido en el encabezado `Authorization`, con el formato `Token valor_del_token`.\n\n**Respuesta esperada:**\n\n- `200 OK`: devuelve el identificador, el nombre de usuario y los grupos asociados al usuario autenticado.\n    \n- `401 Unauthorized`: no se proporcionaron credenciales válidas.\n    \n\n**Validación:** comprobar que la información devuelta corresponda al usuario cuyo token se utilizó."
+      },
+      "response": []
+    },
+    {
+      "name": "03 - Estudiantes sin autenticación",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "http://127.0.0.1:8000/api/estudiantes/",
+          "protocol": "http",
+          "host": [
+            "127",
+            "0",
+            "0",
+            "1"
+          ],
+          "port": "8000",
+          "path": [
+            "api",
+            "estudiantes",
+            ""
+          ]
+        },
+        "description": "**Objetivo:** Verificar que la API proteja el listado de estudiantes frente a solicitudes sin autenticación.\n\n**Método:** GET  \n**Endpoint:** `/api/estudiantes/`  \n**Autenticación:** Ninguna.  \n**Respuesta esperada:** 401 Unauthorized. La API debe rechazar la solicitud porque no se proporcionó un token válido."
+      },
+      "response": []
+    },
+    {
+      "name": "04 - Listar estudiantes autenticado",
+      "request": {
+        "method": "GET",
+        "header": [
+          {
+            "key": "Authorization",
+            "value": "Token 9ce0f001f421e6296a1b3941a4e4e850b7c87b2d"
+          }
+        ],
+        "url": {
+          "raw": "http://127.0.0.1:8000/api/estudiantes/",
+          "protocol": "http",
+          "host": [
+            "127",
+            "0",
+            "0",
+            "1"
+          ],
+          "port": "8000",
+          "path": [
+            "api",
+            "estudiantes",
+            ""
+          ]
+        },
+        "description": "**Objetivo:** Consultar el listado de estudiantes registrados en BecaGest con autenticación válida.\n\n**Método:** GET  \n**Endpoint:** `/api/estudiantes/`  \n**Autenticación:** Token válido de administrador.  \n**Respuesta esperada:** 200 OK. Devuelve el listado de estudiantes según los permisos y filtros aplicables."
+      },
+      "response": []
+    },
+    {
+      "name": "05 - Crear estudiante",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Authorization",
+            "value": "Token 9ce0f001f421e6296a1b3941a4e4e850b7c87b2d"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "\r\n{\r\n  \"usuario\": 2,\r\n  \"identificacion\": \"PRUEBA2026-01\",\r\n  \"nombre\": \"Estudiante\",\r\n  \"apellidos\": \"De Prueba\",\r\n  \"carrera\": \"Informática Empresarial\",\r\n  \"activo\": true\r\n}\r\n",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        },
+        "url": {
+          "raw": "http://127.0.0.1:8000/api/estudiantes/",
+          "protocol": "http",
+          "host": [
+            "127",
+            "0",
+            "0",
+            "1"
+          ],
+          "port": "8000",
+          "path": [
+            "api",
+            "estudiantes",
+            ""
+          ]
+        },
+        "description": "**Objetivo:** Registrar un estudiante nuevo en el sistema BecaGest.\n\n**Método:** POST  \n**Endpoint:** `/api/estudiantes/`  \n**Autenticación:** Token de administrador.  \n**Datos enviados:** Usuario, identificación, nombre, apellidos, carrera y estado activo.  \n**Respuesta esperada:** 201 Created. Devuelve los datos del estudiante registrado. Si los datos son inválidos o están duplicados, la API devuelve un error de validación."
+      },
+      "response": []
+    },
+    {
+      "name": "06 - Consultar estudiante por ID",
+      "request": {
+        "method": "GET",
+        "header": [
+          {
+            "key": "Authorization",
+            "value": "Token 9ce0f001f421e6296a1b3941a4e4e850b7c87b2d"
+          }
+        ],
+        "url": {
+          "raw": "http://127.0.0.1:8000/api/estudiantes/1/",
+          "protocol": "http",
+          "host": [
+            "127",
+            "0",
+            "0",
+            "1"
+          ],
+          "port": "8000",
+          "path": [
+            "api",
+            "estudiantes",
+            "1",
+            ""
+          ]
+        },
+        "description": "StartFragment\n\n**Objetivo:** Consultar la información de un estudiante específico mediante su identificador.\n\n**Método:** GET  \n**Endpoint:** `/api/estudiantes/1/`  \n**Autenticación:** Token válido.  \n**Respuesta esperada:** 200 OK si el estudiante existe. Si no existe, devuelve 404 Not Found."
+      },
+      "response": []
+    },
+    {
+      "name": "07 - Modificar estudiante (PUT)",
+      "request": {
+        "method": "PUT",
+        "header": [
+          {
+            "key": "Authorization",
+            "value": "Token 9ce0f001f421e6296a1b3941a4e4e850b7c87b2d"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "\r\n{\r\n  \"usuario\": 2,\r\n  \"identificacion\": \"PRUEBA2026-01\",\r\n  \"nombre\": \"Estudiante Actualizado\",\r\n  \"apellidos\": \"De Prueba\",\r\n  \"carrera\": \"Informática Empresarial\",\r\n  \"activo\": true\r\n}\r\n",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        },
+        "url": {
+          "raw": "http://127.0.0.1:8000/api/estudiantes/1/",
+          "protocol": "http",
+          "host": [
+            "127",
+            "0",
+            "0",
+            "1"
+          ],
+          "port": "8000",
+          "path": [
+            "api",
+            "estudiantes",
+            "1",
+            ""
+          ]
+        },
+        "description": "StartFragment\n\n**Objetivo:** Actualizar todos los campos editables de un estudiante existente.\n\n**Método:** PUT  \n**Endpoint:** `/api/estudiantes/1/`  \n**Autenticación:** Token válido de administrador.  \n**Respuesta esperada:** 200 OK si la actualización es exitosa. Si los datos son inválidos, devuelve un error de validación.\n\nEndFragment"
+      },
+      "response": []
+    },
+    {
+      "name": "08 - Modificar estudiante parcialmente (PATCH)",
+      "request": {
+        "method": "PATCH",
+        "header": [
+          {
+            "key": "Authorization",
+            "value": "Token 9ce0f001f421e6296a1b3941a4e4e850b7c87b2d"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\r\n  \"apellidos\": \"Apellidos Actualizados\"\r\n}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        },
+        "url": {
+          "raw": "http://127.0.0.1:8000/api/estudiantes/1/",
+          "protocol": "http",
+          "host": [
+            "127",
+            "0",
+            "0",
+            "1"
+          ],
+          "port": "8000",
+          "path": [
+            "api",
+            "estudiantes",
+            "1",
+            ""
+          ]
+        },
+        "description": "StartFragment\n\n**Objetivo:** Modificar uno o varios campos de un estudiante sin reemplazar toda su información.\n\n**Método:** PATCH  \n**Endpoint:** `/api/estudiantes/1/`  \n**Autenticación:** Token válido de administrador.  \n**Respuesta esperada:** 200 OK si la modificación es exitosa. Si los datos son inválidos, devuelve un error de validación.\n\nEndFragment"
+      },
+      "response": []
+    },
+    {
+      "name": "09 - Listar convocatorias",
+      "request": {
+        "method": "GET",
+        "header": [
+          {
+            "key": "Authorization",
+            "value": "Token 9ce0f001f421e6296a1b3941a4e4e850b7c87b2d"
+          }
+        ],
+        "url": {
+          "raw": "http://127.0.0.1:8000/api/convocatorias/",
+          "protocol": "http",
+          "host": [
+            "127",
+            "0",
+            "0",
+            "1"
+          ],
+          "port": "8000",
+          "path": [
+            "api",
+            "convocatorias",
+            ""
+          ]
+        },
+        "description": "StartFragment\n\n**Objetivo:** Consultar las convocatorias de becas registradas en BecaGest.\n\n**Método:** GET  \n**Endpoint:** `/api/convocatorias/`  \n**Autenticación:** Token válido.  \n**Respuesta esperada:** 200 OK. Devuelve las convocatorias registradas; si no hay convocatorias, devuelve una lista vacía.\n\nEndFragment"
+      },
+      "response": []
+    },
+    {
+      "name": "10 - Crear convocatoria",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Authorization",
+            "value": "Token 9ce0f001f421e6296a1b3941a4e4e850b7c87b2d"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\r\n  \"nombre\": \"Convocatoria de prueba 2026\",\r\n  \"descripcion\": \"Convocatoria para probar la API de BecaGest\",\r\n  \"cupos\": 10,\r\n  \"fecha_inicio\": \"2026-11-01\",\r\n  \"fecha_fin\": \"2026-12-31\"\r\n}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        },
+        "url": {
+          "raw": "http://127.0.0.1:8000/api/convocatorias/",
+          "protocol": "http",
+          "host": [
+            "127",
+            "0",
+            "0",
+            "1"
+          ],
+          "port": "8000",
+          "path": [
+            "api",
+            "convocatorias",
+            ""
+          ]
+        },
+        "description": "StartFragment\n\n**Objetivo:** Registrar una nueva convocatoria de becas en BecaGest.\n\n**Método:** POST  \n**Endpoint:** `/api/convocatorias/`  \n**Autenticación:** Token válido de administrador.  \n**Datos enviados:** Nombre, descripción, cantidad de cupos, fecha de inicio y fecha de fin.  \n**Respuesta esperada:** 201 Created. Devuelve los datos de la convocatoria registrada. Si los datos son inválidos, devuelve un error de validación.\n\nEndFragment"
+      },
+      "response": []
+    },
+    {
+      "name": "11 - Consultar convocatoria por ID",
+      "request": {
+        "method": "GET",
+        "header": [
+          {
+            "key": "Authorization",
+            "value": "Token 9ce0f001f421e6296a1b3941a4e4e850b7c87b2d"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        },
+        "url": {
+          "raw": "http://127.0.0.1:8000/api/convocatorias/1/",
+          "protocol": "http",
+          "host": [
+            "127",
+            "0",
+            "0",
+            "1"
+          ],
+          "port": "8000",
+          "path": [
+            "api",
+            "convocatorias",
+            "1",
+            ""
+          ]
+        },
+        "description": "StartFragment\n\n**Objetivo:** Consultar la información de una convocatoria específica mediante su identificador.\n\n**Método:** GET  \n**Endpoint:** `/api/convocatorias/1/`  \n**Autenticación:** Token válido de administrador.\n\n**Resultado esperado:** Código HTTP 200 si la convocatoria existe. La respuesta debe mostrar sus datos, como nombre, descripción, cupos y fechas.\n\nEndFragment"
+      },
+      "response": []
+    },
+    {
+      "name": "12 - Listar solicitudes",
+      "request": {
+        "method": "GET",
+        "header": [
+          {
+            "key": "Authorization",
+            "value": "Token 9ce0f001f421e6296a1b3941a4e4e850b7c87b2d"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        },
+        "url": {
+          "raw": "http://127.0.0.1:8000/api/solicitudes/",
+          "protocol": "http",
+          "host": [
+            "127",
+            "0",
+            "0",
+            "1"
+          ],
+          "port": "8000",
+          "path": [
+            "api",
+            "solicitudes",
+            ""
+          ]
+        },
+        "description": "StartFragment\n\n**Objetivo:** Consultar la lista de solicitudes de beca registradas en el sistema.\n\n**Método:** GET  \n**Endpoint:** `/api/solicitudes/`  \n**Autenticación:** Token válido de administrador.\n\n**Resultado esperado:** Código HTTP 200 y una lista de solicitudes registradas. Si no existen solicitudes, se devuelve una lista vacía.\n\nEndFragment"
+      },
+      "response": []
+    },
+    {
+      "name": "13 - Crear solicitud",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Authorization",
+            "value": "Token 9ce0f001f421e6296a1b3941a4e4e850b7c87b2d"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\r\n  \"estudiante\": 1,\r\n  \"convocatoria\": 1,\r\n  \"motivo\": \"Solicito apoyo económico para continuar mis estudios universitarios.\"\r\n}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        },
+        "url": {
+          "raw": "http://127.0.0.1:8000/api/solicitudes/",
+          "protocol": "http",
+          "host": [
+            "127",
+            "0",
+            "0",
+            "1"
+          ],
+          "port": "8000",
+          "path": [
+            "api",
+            "solicitudes",
+            ""
+          ]
+        },
+        "description": "StartFragment\n\n**Objetivo:** Registrar una nueva solicitud de beca asociada a un estudiante y una convocatoria.\n\n**Método:** POST  \n**Endpoint:** `/api/solicitudes/`  \n**Autenticación:** Token válido de administrador para esta prueba.\n\n**Datos requeridos:** Identificador del estudiante, identificador de la convocatoria y motivo de la solicitud.\n\n**Resultado esperado:** Código HTTP 201 si la solicitud se registra correctamente. La respuesta debe incluir los datos de la solicitud creada, su identificador y su estado inicial.\n\nEndFragment"
+      },
+      "response": []
+    },
+    {
+      "name": "14 - Consultar solicitud por ID",
+      "request": {
+        "method": "GET",
+        "header": [
+          {
+            "key": "Authorization",
+            "value": "Token 9ce0f001f421e6296a1b3941a4e4e850b7c87b2d"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        },
+        "url": {
+          "raw": "http://127.0.0.1:8000/api/solicitudes/1/",
+          "protocol": "http",
+          "host": [
+            "127",
+            "0",
+            "0",
+            "1"
+          ],
+          "port": "8000",
+          "path": [
+            "api",
+            "solicitudes",
+            "1",
+            ""
+          ]
+        },
+        "description": "StartFragment\n\n**Objetivo:** Consultar los detalles de una solicitud de beca específica mediante su identificador.\n\n**Método:** GET  \n**Endpoint:** `/api/solicitudes/1/`  \n**Autenticación:** Token válido de administrador.\n\n**Resultado esperado:** Código HTTP 200 si la solicitud existe. La respuesta debe mostrar sus datos, incluyendo el estudiante asociado, la convocatoria, el motivo y el estado de la solicitud.\n\nEndFragment"
+      },
+      "response": []
+    },
+    {
+      "name": "15 - Listar evaluaciones",
+      "request": {
+        "method": "GET",
+        "header": [
+          {
+            "key": "Authorization",
+            "value": "Token 9ce0f001f421e6296a1b3941a4e4e850b7c87b2d"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "\r\n",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        },
+        "url": {
+          "raw": "http://127.0.0.1:8000/api/evaluaciones/",
+          "protocol": "http",
+          "host": [
+            "127",
+            "0",
+            "0",
+            "1"
+          ],
+          "port": "8000",
+          "path": [
+            "api",
+            "evaluaciones",
+            ""
+          ]
+        },
+        "description": "**Objetivo:** Consultar la lista de evaluaciones registradas para las solicitudes de beca.\n\n**Método:** GET  \n**Endpoint:** `/api/evaluaciones/`  \n**Autenticación:** Token válido de administrador.\n\n**Resultado esperado:** Código HTTP 200 y una lista de evaluaciones registradas. Si no existen evaluaciones, se devuelve una lista vacía."
+      },
+      "response": []
+    },
+    {
+      "name": "16 - Crear evaluación",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Authorization",
+            "value": "Token 9ce0f001f421e6296a1b3941a4e4e850b7c87b2d"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "\r\n{\r\n  \"solicitud\": 1,\r\n  \"resultado\": \"APROBADA\",\r\n  \"puntaje\": 90,\r\n  \"observaciones\": \"Cumple con los criterios de evaluación.\"\r\n}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        },
+        "url": {
+          "raw": "http://127.0.0.1:8000/api/evaluaciones/",
+          "protocol": "http",
+          "host": [
+            "127",
+            "0",
+            "0",
+            "1"
+          ],
+          "port": "8000",
+          "path": [
+            "api",
+            "evaluaciones",
+            ""
+          ]
+        },
+        "description": "**Objetivo:** Registrar una evaluación asociada a una solicitud de beca.\n\n**Método:** POST  \n**Endpoint:** `/api/evaluaciones/`  \n**Autenticación:** Token válido de administrador.\n\n**Datos de prueba:** Identificador de la solicitud, resultado, puntaje y observaciones.\n\n**Resultado esperado:** Código HTTP 201 si la evaluación se registra correctamente. La respuesta debe incluir los datos de la evaluación creada."
+      },
+      "response": []
+    },
+    {
+      "name": "17 - Consultar evaluación por ID",
+      "request": {
+        "method": "GET",
+        "header": [
+          {
+            "key": "Authorization",
+            "value": "Token 9ce0f001f421e6296a1b3941a4e4e850b7c87b2d"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        },
+        "url": {
+          "raw": "http://127.0.0.1:8000/api/evaluaciones/1/",
+          "protocol": "http",
+          "host": [
+            "127",
+            "0",
+            "0",
+            "1"
+          ],
+          "port": "8000",
+          "path": [
+            "api",
+            "evaluaciones",
+            "1",
+            ""
+          ]
+        },
+        "description": "StartFragment\n\n**Objetivo:** Consultar los detalles de una evaluación específica mediante su identificador.\n\n**Método:** GET  \n**Endpoint:** `/api/evaluaciones/1/`  \n**Autenticación:** Token válido de administrador.\n\n**Resultado esperado:** Código HTTP 200 si la evaluación existe. La respuesta debe incluir los datos de la evaluación, como la solicitud asociada, el resultado, el puntaje, las observaciones y la fecha de evaluación.\n\nEndFragment"
+      },
+      "response": []
+    },
+    {
+      "name": "18 - Listar asignaciones",
+      "request": {
+        "method": "GET",
+        "header": [
+          {
+            "key": "Authorization",
+            "value": "Token 9ce0f001f421e6296a1b3941a4e4e850b7c87b2d"
+          }
+        ],
+        "url": {
+          "raw": "http://127.0.0.1:8000/api/asignaciones/",
+          "protocol": "http",
+          "host": [
+            "127",
+            "0",
+            "0",
+            "1"
+          ],
+          "port": "8000",
+          "path": [
+            "api",
+            "asignaciones",
+            ""
+          ]
+        },
+        "description": "**Objetivo:** Consultar la lista de asignaciones económicas registradas en el sistema.\n\n**Método:** GET  \n**Endpoint:** `/api/asignaciones/`  \n**Autenticación:** Token válido de administrador.\n\n**Resultado esperado:** Código HTTP 200 y una lista de asignaciones registradas. Si no existen asignaciones, se devuelve una lista vacía."
+      },
+      "response": []
+    },
+    {
+      "name": "19 - Crear asignación",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Authorization",
+            "value": "Token 9ce0f001f421e6296a1b3941a4e4e850b7c87b2d"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\r\n  \"evaluacion\": 1,\r\n  \"monto_mensual\": \"50000.00\"\r\n}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        },
+        "url": {
+          "raw": "http://127.0.0.1:8000/api/asignaciones/",
+          "protocol": "http",
+          "host": [
+            "127",
+            "0",
+            "0",
+            "1"
+          ],
+          "port": "8000",
+          "path": [
+            "api",
+            "asignaciones",
+            ""
+          ]
+        },
+        "description": "StartFragment\n\n**Objetivo:** Registrar una asignación económica asociada a una evaluación de beca.\n\n**Método:** POST  \n**Endpoint:** `/api/asignaciones/`  \n**Autenticación:** Token válido de administrador.\n\n**Datos de prueba:** Identificador de la evaluación y monto mensual de la asignación.\n\n**Resultado esperado:** Código HTTP 201 si la asignación se registra correctamente. La respuesta debe incluir los datos de la asignación creada, su identificador y su estado.\n\nEndFragment"
+      },
+      "response": []
+    },
+    {
+      "name": "20 - Consultar asignación por ID",
+      "request": {
+        "method": "GET",
+        "header": [
+          {
+            "key": "Authorization",
+            "value": "Token 9ce0f001f421e6296a1b3941a4e4e850b7c87b2d"
+          }
+        ],
+        "url": {
+          "raw": "http://127.0.0.1:8000/api/asignaciones/1/",
+          "protocol": "http",
+          "host": [
+            "127",
+            "0",
+            "0",
+            "1"
+          ],
+          "port": "8000",
+          "path": [
+            "api",
+            "asignaciones",
+            "1",
+            ""
+          ]
+        },
+        "description": "StartFragment\n\n**Objetivo:** Consultar los detalles de una asignación económica específica mediante su identificador.\n\n**Método:** GET  \n**Endpoint:** `/api/asignaciones/1/`  \n**Autenticación:** Token válido de administrador.\n\n**Resultado esperado:** Código HTTP 200 si la asignación existe. La respuesta debe mostrar los datos de la asignación, incluyendo la evaluación asociada, el monto mensual y el estado.\n\nEndFragment"
+      },
+      "response": []
+    },
+    {
+      "name": "21 - Validar fechas de convocatoria",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Authorization",
+            "value": "Token 9ce0f001f421e6296a1b3941a4e4e850b7c87b2d"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\r\n  \"nombre\": \"Convocatoria fechas inválidas\",\r\n  \"descripcion\": \"Prueba de validación de fechas\",\r\n  \"cupos\": 5,\r\n  \"fecha_inicio\": \"2026-12-31\",\r\n  \"fecha_fin\": \"2026-11-01\"\r\n}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        },
+        "url": {
+          "raw": "http://127.0.0.1:8000/api/convocatorias/",
+          "protocol": "http",
+          "host": [
+            "127",
+            "0",
+            "0",
+            "1"
+          ],
+          "port": "8000",
+          "path": [
+            "api",
+            "convocatorias",
+            ""
+          ]
+        },
+        "description": "StartFragment\n\n**Objetivo:** Comprobar que el sistema rechace una convocatoria cuya fecha de finalización sea anterior a la fecha de inicio.\n\n**Método:** POST  \n**Endpoint:** `/api/convocatorias/`  \n**Autenticación:** Token válido de administrador.\n\n**Resultado esperado:** HTTP 400 Bad Request. La convocatoria no debe registrarse porque el período indicado es inválido.\n\nEndFragment"
+      },
+      "response": [
+        {
+          "name": "400 - Fechas inválidas",
+          "originalRequest": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Token 9ce0f001f421e6296a1b3941a4e4e850b7c87b2d"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n  \"nombre\": \"Convocatoria fechas inválidas\",\r\n  \"descripcion\": \"Prueba de validación de fechas\",\r\n  \"cupos\": 5,\r\n  \"fecha_inicio\": \"2026-12-31\",\r\n  \"fecha_fin\": \"2026-11-01\"\r\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "http://127.0.0.1:8000/api/convocatorias/",
+              "protocol": "http",
+              "host": [
+                "127",
+                "0",
+                "0",
+                "1"
+              ],
+              "port": "8000",
+              "path": [
+                "api",
+                "convocatorias",
+                ""
+              ]
+            }
+          },
+          "status": "Bad Request",
+          "code": 400,
+          "_postman_previewlanguage": "json",
+          "header": [
+            {
+              "key": "date",
+              "value": "Thu, 29 Oct 2026 06:25:54 GMT"
+            },
+            {
+              "key": "server",
+              "value": "WSGIServer/0.2 CPython/3.14.2"
+            },
+            {
+              "key": "content-type",
+              "value": "application/json"
+            },
+            {
+              "key": "vary",
+              "value": "Accept"
+            },
+            {
+              "key": "allow",
+              "value": "OPTIONS, GET, POST"
+            },
+            {
+              "key": "x-frame-options",
+              "value": "DENY"
+            },
+            {
+              "key": "content-length",
+              "value": "68"
+            },
+            {
+              "key": "x-content-type-options",
+              "value": "nosniff"
+            },
+            {
+              "key": "referrer-policy",
+              "value": "same-origin"
+            },
+            {
+              "key": "cross-origin-opener-policy",
+              "value": "same-origin"
+            }
+          ],
+          "cookie": [],
+          "body": "{\n  \"fecha_fin\": [\n    \"La fecha final no puede ser anterior a la inicial.\"\n  ]\n}"
+        }
+      ]
+    },
+    {
+      "name": "22 - Validar convocatoria sin cupos",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Authorization",
+            "value": "Token 9ce0f001f421e6296a1b3941a4e4e850b7c87b2d"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\r\n  \"nombre\": \"Convocatoria sin cupos\",\r\n  \"descripcion\": \"Prueba de validación de cupos\",\r\n  \"cupos\": 0,\r\n  \"fecha_inicio\": \"2026-11-01\",\r\n  \"fecha_fin\": \"2026-12-31\"\r\n}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        },
+        "url": {
+          "raw": "http://127.0.0.1:8000/api/convocatorias/",
+          "protocol": "http",
+          "host": [
+            "127",
+            "0",
+            "0",
+            "1"
+          ],
+          "port": "8000",
+          "path": [
+            "api",
+            "convocatorias",
+            ""
+          ]
+        },
+        "description": "StartFragment\n\n**Objetivo:** Comprobar que el sistema rechace una convocatoria que no dispone de cupos.\n\n**Método:** POST  \n**Endpoint:** `/api/convocatorias/`  \n**Autenticación:** Token válido de administrador.\n\n**Resultado esperado:** HTTP 400 Bad Request. La convocatoria no debe registrarse porque la cantidad de cupos debe ser mayor que cero.\n\nEndFragment"
+      },
+      "response": [
+        {
+          "name": "400 - Convocatoria sin cupos",
+          "originalRequest": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Token 9ce0f001f421e6296a1b3941a4e4e850b7c87b2d"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n  \"nombre\": \"Convocatoria sin cupos\",\r\n  \"descripcion\": \"Prueba de validación de cupos\",\r\n  \"cupos\": 0,\r\n  \"fecha_inicio\": \"2026-11-01\",\r\n  \"fecha_fin\": \"2026-12-31\"\r\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "http://127.0.0.1:8000/api/convocatorias/",
+              "protocol": "http",
+              "host": [
+                "127",
+                "0",
+                "0",
+                "1"
+              ],
+              "port": "8000",
+              "path": [
+                "api",
+                "convocatorias",
+                ""
+              ]
+            }
+          },
+          "status": "Bad Request",
+          "code": 400,
+          "_postman_previewlanguage": "json",
+          "header": [
+            {
+              "key": "date",
+              "value": "Thu, 29 Oct 2026 06:31:51 GMT"
+            },
+            {
+              "key": "server",
+              "value": "WSGIServer/0.2 CPython/3.14.2"
+            },
+            {
+              "key": "content-type",
+              "value": "application/json"
+            },
+            {
+              "key": "vary",
+              "value": "Accept"
+            },
+            {
+              "key": "allow",
+              "value": "OPTIONS, GET, POST"
+            },
+            {
+              "key": "x-frame-options",
+              "value": "DENY"
+            },
+            {
+              "key": "content-length",
+              "value": "51"
+            },
+            {
+              "key": "x-content-type-options",
+              "value": "nosniff"
+            },
+            {
+              "key": "referrer-policy",
+              "value": "same-origin"
+            },
+            {
+              "key": "cross-origin-opener-policy",
+              "value": "same-origin"
+            }
+          ],
+          "cookie": [],
+          "body": "{\n  \"cupos\": [\n    \"Los cupos deben ser mayores que cero.\"\n  ]\n}"
+        }
+      ]
+    },
+    {
+      "name": "23 - Validar solicitud duplicada",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Authorization",
+            "value": "Token 9ce0f001f421e6296a1b3941a4e4e850b7c87b2d"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\r\n  \"estudiante\": 1,\r\n  \"convocatoria\": 1,\r\n  \"motivo\": \"Prueba de solicitud duplicada para la misma convocatoria.\"\r\n}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        },
+        "url": {
+          "raw": "http://127.0.0.1:8000/api/solicitudes/",
+          "protocol": "http",
+          "host": [
+            "127",
+            "0",
+            "0",
+            "1"
+          ],
+          "port": "8000",
+          "path": [
+            "api",
+            "solicitudes",
+            ""
+          ]
+        },
+        "description": "StartFragment\n\n**Objetivo:** Comprobar que un estudiante no pueda registrar más de una solicitud para la misma convocatoria.\n\n**Método:** POST  \n**Endpoint:** `/api/solicitudes/`  \n**Autenticación:** Token válido de administrador para esta prueba.\n\n**Resultado esperado:** HTTP 400 Bad Request. El sistema debe rechazar la solicitud duplicada y conservar el registro original.\n\nEndFragment"
+      },
+      "response": [
+        {
+          "name": "400 - Solicitud duplicada",
+          "originalRequest": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Token 9ce0f001f421e6296a1b3941a4e4e850b7c87b2d"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n  \"estudiante\": 1,\r\n  \"convocatoria\": 1,\r\n  \"motivo\": \"Prueba de solicitud duplicada para la misma convocatoria.\"\r\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "http://127.0.0.1:8000/api/solicitudes/",
+              "protocol": "http",
+              "host": [
+                "127",
+                "0",
+                "0",
+                "1"
+              ],
+              "port": "8000",
+              "path": [
+                "api",
+                "solicitudes",
+                ""
+              ]
+            }
+          },
+          "status": "Bad Request",
+          "code": 400,
+          "_postman_previewlanguage": "json",
+          "header": [
+            {
+              "key": "date",
+              "value": "Thu, 29 Oct 2026 06:32:55 GMT"
+            },
+            {
+              "key": "server",
+              "value": "WSGIServer/0.2 CPython/3.14.2"
+            },
+            {
+              "key": "content-type",
+              "value": "application/json"
+            },
+            {
+              "key": "vary",
+              "value": "Accept"
+            },
+            {
+              "key": "allow",
+              "value": "OPTIONS, GET, POST"
+            },
+            {
+              "key": "x-frame-options",
+              "value": "DENY"
+            },
+            {
+              "key": "content-length",
+              "value": "84"
+            },
+            {
+              "key": "x-content-type-options",
+              "value": "nosniff"
+            },
+            {
+              "key": "referrer-policy",
+              "value": "same-origin"
+            },
+            {
+              "key": "cross-origin-opener-policy",
+              "value": "same-origin"
+            }
+          ],
+          "cookie": [],
+          "body": "{\n  \"non_field_errors\": [\n    \"The fields estudiante, convocatoria must make a unique set.\"\n  ]\n}"
+        }
+      ]
+    },
+    {
+      "name": "24 - Validar puntaje fuera de rango",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Authorization",
+            "value": "Token 9ce0f001f421e6296a1b3941a4e4e850b7c87b2d"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\r\n  \"solicitud\": 1,\r\n  \"resultado\": \"APROBADA\",\r\n  \"puntaje\": 101,\r\n  \"observaciones\": \"Prueba de puntaje fuera del rango permitido.\"\r\n}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        },
+        "url": {
+          "raw": "http://127.0.0.1:8000/api/evaluaciones/",
+          "protocol": "http",
+          "host": [
+            "127",
+            "0",
+            "0",
+            "1"
+          ],
+          "port": "8000",
+          "path": [
+            "api",
+            "evaluaciones",
+            ""
+          ]
+        },
+        "description": "StartFragment\n\n**Objetivo:** Comprobar que el sistema rechace una evaluación cuyo puntaje sea superior al máximo permitido.\n\n**Método:** POST  \n**Endpoint:** `/api/evaluaciones/`  \n**Autenticación:** Token válido de administrador.\n\n**Resultado esperado:** HTTP 400 Bad Request. La evaluación no debe registrarse porque el puntaje permitido está entre 0 y 100.\n\nEndFragment"
+      },
+      "response": [
+        {
+          "name": "400 - Puntaje fuera de rango",
+          "originalRequest": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Token 9ce0f001f421e6296a1b3941a4e4e850b7c87b2d"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n  \"solicitud\": 1,\r\n  \"resultado\": \"APROBADA\",\r\n  \"puntaje\": 101,\r\n  \"observaciones\": \"Prueba de puntaje fuera del rango permitido.\"\r\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "http://127.0.0.1:8000/api/evaluaciones/",
+              "protocol": "http",
+              "host": [
+                "127",
+                "0",
+                "0",
+                "1"
+              ],
+              "port": "8000",
+              "path": [
+                "api",
+                "evaluaciones",
+                ""
+              ]
+            }
+          },
+          "status": "Bad Request",
+          "code": 400,
+          "_postman_previewlanguage": "json",
+          "header": [
+            {
+              "key": "date",
+              "value": "Thu, 29 Oct 2026 06:33:35 GMT"
+            },
+            {
+              "key": "server",
+              "value": "WSGIServer/0.2 CPython/3.14.2"
+            },
+            {
+              "key": "content-type",
+              "value": "application/json"
+            },
+            {
+              "key": "vary",
+              "value": "Accept"
+            },
+            {
+              "key": "allow",
+              "value": "OPTIONS, GET, POST"
+            },
+            {
+              "key": "x-frame-options",
+              "value": "DENY"
+            },
+            {
+              "key": "content-length",
+              "value": "115"
+            },
+            {
+              "key": "x-content-type-options",
+              "value": "nosniff"
+            },
+            {
+              "key": "referrer-policy",
+              "value": "same-origin"
+            },
+            {
+              "key": "cross-origin-opener-policy",
+              "value": "same-origin"
+            }
+          ],
+          "cookie": [],
+          "body": "{\n  \"puntaje\": [\n    \"El puntaje debe estar entre 0 y 100.\"\n  ],\n  \"solicitud\": [\n    \"evaluacion with this solicitud already exists.\"\n  ]\n}"
+        }
+      ]
+    },
+    {
+      "name": "25 - Validar monto negativo",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Authorization",
+            "value": "Token 9ce0f001f421e6296a1b3941a4e4e850b7c87b2d"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\r\n  \"evaluacion\": 1,\r\n  \"monto_mensual\": \"-50000.00\"\r\n}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        },
+        "url": {
+          "raw": "http://127.0.0.1:8000/api/asignaciones/",
+          "protocol": "http",
+          "host": [
+            "127",
+            "0",
+            "0",
+            "1"
+          ],
+          "port": "8000",
+          "path": [
+            "api",
+            "asignaciones",
+            ""
+          ]
+        },
+        "description": "StartFragment\n\n**Objetivo:** Comprobar que el sistema rechace una asignación con un monto mensual negativo.\n\n**Método:** POST  \n**Endpoint:** `/api/asignaciones/`  \n**Autenticación:** Token válido de administrador.\n\n**Resultado esperado:** HTTP 400 Bad Request. La asignación no debe registrarse porque el monto mensual debe ser mayor que cero.\n\nEndFragment"
+      },
+      "response": [
+        {
+          "name": "400 - Monto negativo",
+          "originalRequest": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Token 9ce0f001f421e6296a1b3941a4e4e850b7c87b2d"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n  \"evaluacion\": 1,\r\n  \"monto_mensual\": \"-50000.00\"\r\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "http://127.0.0.1:8000/api/asignaciones/",
+              "protocol": "http",
+              "host": [
+                "127",
+                "0",
+                "0",
+                "1"
+              ],
+              "port": "8000",
+              "path": [
+                "api",
+                "asignaciones",
+                ""
+              ]
+            }
+          },
+          "status": "Bad Request",
+          "code": 400,
+          "_postman_previewlanguage": "json",
+          "header": [
+            {
+              "key": "date",
+              "value": "Thu, 29 Oct 2026 06:35:32 GMT"
+            },
+            {
+              "key": "server",
+              "value": "WSGIServer/0.2 CPython/3.14.2"
+            },
+            {
+              "key": "content-type",
+              "value": "application/json"
+            },
+            {
+              "key": "vary",
+              "value": "Accept"
+            },
+            {
+              "key": "allow",
+              "value": "OPTIONS, GET, POST"
+            },
+            {
+              "key": "x-frame-options",
+              "value": "DENY"
+            },
+            {
+              "key": "content-length",
+              "value": "128"
+            },
+            {
+              "key": "x-content-type-options",
+              "value": "nosniff"
+            },
+            {
+              "key": "referrer-policy",
+              "value": "same-origin"
+            },
+            {
+              "key": "cross-origin-opener-policy",
+              "value": "same-origin"
+            }
+          ],
+          "cookie": [],
+          "body": "{\n  \"monto_mensual\": [\n    \"El monto mensual debe ser mayor que cero.\"\n  ],\n  \"evaluacion\": [\n    \"asignacion with this evaluacion already exists.\"\n  ]\n}"
+        }
+      ]
+    }
+  ]
+}
