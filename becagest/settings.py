@@ -44,7 +44,8 @@ INSTALLED_APPS = [
     'rest_framework.authtoken',
     'estudiantes',
     'convocatorias',
-     'evaluaciones',
+    'solicitudes',
+    'evaluaciones',
     'asignaciones',
 ]
 
